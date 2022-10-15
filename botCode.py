@@ -2,8 +2,10 @@
 import discord
 
 # GETS THE CLIENT OBJECT FROM DISCORD.PY. CLIENT IS SYNONYMOUS WITH BOT.
-bot = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
 
+bot = discord.Client(intents=intents)
 # EVENT LISTENER FOR WHEN THE BOT HAS SWITCHED FROM OFFLINE TO ONLINE.
 @bot.event
 async def on_ready():
