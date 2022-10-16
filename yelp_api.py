@@ -5,8 +5,11 @@
 import json
 from yelp.client import Client
 import requests
+import os
+from dotenv import load_dotenv
 
-API_KEY = 'HIHXOVLf-jSEn24ROb755mxQYjhp6SAyKBMZseH-KpUV5dehqGJDKyHkO1Ah5U8sYnlz_xMekjLhrWh6eiZSFlWwbGzF0lWIdPuJtjyeRTFX_MY3_bSHRJ4opu5KY3Yx'
+load_dotenv()
+API_KEY = os.getenv("YELP_API_KEY")
 API_HOST = 'https://api.yelp.com'
 BUSINESS_PATH = '/v3/businesses/'
 HEADERS = {'Authorization': 'Bearer %s' % API_KEY}
@@ -66,15 +69,15 @@ params = {  'term': search_terms,
             'categories': categories}
 
 
-response = search(params)
+# response = search(params)
+# response = ""
+# parsed = json.loads(response.text)
 
-parsed = json.loads(response.text)
-
-businesses = parsed["businesses"]
-for business in businesses:
-    print("Name:    ", business["name"])
-    print("Rating:  ", business["rating"])
-    print("Price:   ", business["price"])
-    print("Phone:   ", business["phone"])
-    print("Address: ", ", ".join(business["location"]["display_address"]))
-    print()
+# businesses = parsed["businesses"]
+# for business in businesses:
+#     print("Name:    ", business["name"])
+#     print("Rating:  ", business["rating"])
+#     print("Price:   ", business["price"])
+#     print("Phone:   ", business["phone"])
+#     print("Address: ", ", ".join(business["location"]["display_address"]))
+#     print()
