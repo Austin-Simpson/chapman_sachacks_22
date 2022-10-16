@@ -1,6 +1,7 @@
 import discord
 import re
 from discord.ext import commands
+from discord.utils import get
 
 REGEX = re.compile(r'"(.*?)"')
 
@@ -12,7 +13,6 @@ client = discord.Client(intents=intents)
 
 
 bot = commands.Bot(command_prefix = '!', intents = intents)
-
 
         
 @bot.command()
@@ -30,58 +30,72 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # await message.add_reaction()
+    # m_str = message.content()
 
 #### add emojis to message
     if message.author == client.user:
         i = message.content.count('\n')
         # await message.channel.send(i)
+        if i < 1:
+            return
+
         for i in range(message.content.count('\n') + 1):
             await message.add_reaction(chr(ord("\U0001F1E6") + i))
-
-        poll_id = message.id    
-        return poll_id
+        return 
     
 #### fetch reactions and find most voted
     if message.content.startswith("!done"):
         
         most_recent = None
-        async for message in message.channel.history(limit=200):
+        async for message in message.channel.history(limit=20):
             if message.author == client.user:
                 if most_recent == None:
                     most_recent = message
                 else:
                     if message.created_at > most_recent.created_at:
                         most_recent = message
-        
-        await message.channel.send("Most recent = " + most_recent.content)
+            
+        emoji_pattern = re.compile("["
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           "]+", flags=re.UNICODE)
+        no_emoji = (emoji_pattern.sub(r'', most_recent.content))
+        # await message.channel.send("Most recent = " + most_recent.content)
+        reactions = most_recent.reactions
+        max = most_recent.reactions[0].count
+        for i in range(len(most_recent.reactions) - 1):
+            if most_recent.reactions[i].count < most_recent.reactions[i+1].count:
+                max = most_recent.reactions[i+1].count
+
+            
+    
+            
+        for i in range(len(most_recent.reactions)):
+            if most_recent.reactions[i].count == max:
+                await message.channel.send("Most voted for: " + most_recent.reactions[i].emoji)
+                # winners = 
+
+            
+
+            
+        await message.channel.send(most_recent.reactions[0].count)
+
+        # await message.channel.send(reactions)
+    
+        return
                 
-                
-    #     oldestMessage = None
-    #     for channel in message.guild.text_channels:
-    #         fetchMessage = await channel.history().find(message.author == client.user)
-    #         if fetchMessage is None:
-    #             continue
-
-    #     if oldestMessage is None:
-    #         oldestMessage = fetchMessage
-    #     else:
-    #         if fetchMessage.created_at > oldestMessage.created_at:
-    #             oldestMessage = fetchMessage
-
-    #     if (oldestMessage is not None):
-    #         await message.channel.send(f"Oldest message is {oldestMessage.content}")
-    #     else:
-    #         await message.channel.send("No message found.")
-
 
     if message.content.startswith('!eat'):
+        
         # fields = re.findall(r'"(.*?)"', message)
         # await message.channel.send(fields[0], fields[1:] if len(fields) > 0 else [])
         # await message.delete()
         args = message.content[5:].split(', ')
         # await message.channel.send(args)
-        str = ""
+        str = ''
         i = 0
+        if len(args) <= 1:
+            await message.channel.send("Enter more options to make a poll, dirtbag!")    
+            return
         for arg in args:
             str += chr(ord("\U0001F1E6") + i) + '  ' + arg + '\n'
             i += 1
