@@ -156,5 +156,12 @@ if __name__ == "__main__":
     client = EasyPoll(intents = intents)
     client.run(token)
 
+@bot.command()
+async def test(ctx, *args):
+    arguments = ', '.join(args)
+    await ctx.send(f'{len(args)} arguments: {arguments}')
+
+
 # EXECUTES THE BOT WITH THE SPECIFIED TOKEN.
 bot.run("MTAzMDk0MDUyMjc5OTQzNTc5Nw.G3Ryq8.P_AONddzU9s3NIEg4_ZAdfZXOIXrSQPLpZ4Q9w")
+
