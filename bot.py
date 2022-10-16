@@ -1,4 +1,4 @@
-from yelp import *
+
 import discord
 import re
 import os
