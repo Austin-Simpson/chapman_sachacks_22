@@ -10,7 +10,12 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 from typing import List, Dict, Optional
 
+intents = discord.Intents.default()
+intents.message_content = True
 
+
+
+client = discord.Client(intents=intents)
 """
 Discord bot to creates polls
 The question must comes as first argument after the /poll
@@ -23,10 +28,6 @@ or
 
 
 REGEX = re.compile(r'"(.*?)"')
-
-
-intents = discord.Intents.default()
-intents.message_content = True
 
 
 class PollException(Exception):
@@ -51,7 +52,7 @@ class Poll:
             raise PollException("Poll must have an even number of double quotes")
 
         fields = re.findall(REGEX, poll_str)
-        return cls(fields[0], fields[1:] if len(fields) > 0 else [])
+        return (fields[0], fields[1:])
 
     def get_message(self):
         """Get the poll question with emoji"""
@@ -83,7 +84,7 @@ class Poll:
             return ["👍", "👎"]
 
     @staticmethod
-    def get_regional_indicator_symbol(idx: int) -> str:
+    def get_emote(idx: int) -> str:
         """idx=0 -> A, idx=1 -> B, ... idx=25 -> Z"""
         if 0 <= idx < 26:
             return chr(ord("\U0001F1E6") + idx)
@@ -96,7 +97,6 @@ class EasyPoll(discord.Client):
     When the bot read one of its own message, it checks if the nouce is in the dict
     If yes, it add the poll reactions emoji to the message
     """
-
 
     def __init__(self, **options):
         super().__init__(**options)
@@ -111,12 +111,12 @@ class EasyPoll(discord.Client):
         embed = discord.Embed(
             title="Usage:", description=description, color=discord.Color.dark_red()
         )
-        embed.set_footer(text="HEPIA powered")
+        embed.set_footer(text="yelp powered")
         return embed
 
     async def on_ready(self) -> None:
         print(f"{self.user} has connected to Discord!")
-        activity = discord.Game("/poll")
+        activity = discord.Game("food")
         await self.change_presence(activity=activity)
 
     async def send_reactions(self, message: discord.message) -> None:
@@ -147,7 +147,15 @@ class EasyPoll(discord.Client):
                 await self.send_poll(message)
             except PollException:
                 await message.channel.send(embed=self.help())
+	
 
+@client.event
+async def on_message(message):
+	if message.author == client.user:
+		return
+	
+	if message.content == 'cool':
+		await message.add_reaction('\U0001F60E')
 
 if __name__ == "__main__":
     
@@ -155,13 +163,3 @@ if __name__ == "__main__":
     token = os.getenv("DISCORD_TOKEN")
     client = EasyPoll(intents = intents)
     client.run(token)
-
-@bot.command()
-async def test(ctx, *args):
-    arguments = ', '.join(args)
-    await ctx.send(f'{len(args)} arguments: {arguments}')
-
-
-# EXECUTES THE BOT WITH THE SPECIFIED TOKEN.
-bot.run("MTAzMDk0MDUyMjc5OTQzNTc5Nw.G3Ryq8.P_AONddzU9s3NIEg4_ZAdfZXOIXrSQPLpZ4Q9w")
-
