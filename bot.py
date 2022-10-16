@@ -30,16 +30,50 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # await message.add_reaction()
-    if message.author == client.user:
 
+#### add emojis to message
+    if message.author == client.user:
         i = message.content.count('\n')
-        
         # await message.channel.send(i)
         for i in range(message.content.count('\n') + 1):
             await message.add_reaction(chr(ord("\U0001F1E6") + i))
-        
-        return
+
+        poll_id = message.id    
+        return poll_id
     
+#### fetch reactions and find most voted
+    if message.content.startswith("!done"):
+        
+        most_recent = None
+        async for message in message.channel.history(limit=200):
+            if message.author == client.user:
+                if most_recent == None:
+                    most_recent = message
+                else:
+                    if message.created_at > most_recent.created_at:
+                        most_recent = message
+        
+        await message.channel.send("Most recent = " + most_recent.content)
+                
+                
+    #     oldestMessage = None
+    #     for channel in message.guild.text_channels:
+    #         fetchMessage = await channel.history().find(message.author == client.user)
+    #         if fetchMessage is None:
+    #             continue
+
+    #     if oldestMessage is None:
+    #         oldestMessage = fetchMessage
+    #     else:
+    #         if fetchMessage.created_at > oldestMessage.created_at:
+    #             oldestMessage = fetchMessage
+
+    #     if (oldestMessage is not None):
+    #         await message.channel.send(f"Oldest message is {oldestMessage.content}")
+    #     else:
+    #         await message.channel.send("No message found.")
+
+
     if message.content.startswith('!eat'):
         # fields = re.findall(r'"(.*?)"', message)
         # await message.channel.send(fields[0], fields[1:] if len(fields) > 0 else [])
