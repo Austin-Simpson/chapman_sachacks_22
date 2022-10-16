@@ -8,6 +8,10 @@ from discord.utils import get
 from yelp_api import *
 import json
 import requests
+import disnake
+from PIL import Image
+import numpy as np
+import urllib.request
 
 REGEX = re.compile(r'"(.*?)"')
 
@@ -105,12 +109,13 @@ async def on_message(message):
 
         businesses = parsed["businesses"]
 
+
         for business in businesses:
-            file = discord.File("small_0")
+            file = disnake.File("small_0.png", filename="image.png")
             print(business["rating"])
             embed=discord.Embed(title=business["name"], url=business["url"], description="Address: " + ", ".join(business["location"]["display_address"]) + "\n" + business["price"], color=0xdc143c)
             embed.set_image(url=business["image_url"])
-            embed.set_footer(text="stars", icon_url="https://drjamestalkington.com/wp-content/uploads/2021/02/yelp-logo-png-round-8-copy.png")
+            embed.set_footer(text="stars", icon_url="https://i.stack.imgur.com/Ke92A.png")
             embed.set_thumbnail(url="https://drjamestalkington.com/wp-content/uploads/2021/02/yelp-logo-png-round-8-copy.png")
             await message.channel.send(embed = embed)
         return
