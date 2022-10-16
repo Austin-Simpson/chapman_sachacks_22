@@ -3,6 +3,7 @@ import discord
 import re
 from discord.ext import commands
 from discord.utils import get
+from yelp_api import *
 
 REGEX = re.compile(r'"(.*?)"')
 
