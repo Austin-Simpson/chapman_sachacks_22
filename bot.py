@@ -130,7 +130,7 @@ async def on_message(message):
         str = ''
         i = 0
         if len(args) <= 1:
-            await message.channel.send("Enter more options to make a poll, dirtbag!")
+            await message.channel.send("Enter more options to make a poll!")
             return
         for arg in args:
             str += chr(ord("\U0001F1E6") + i) + '  ' + arg + '\n'
