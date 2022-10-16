@@ -1,7 +1,9 @@
+from yelp import *
 import discord
 import re
 from discord.ext import commands
 from discord.utils import get
+from yelp_api import *
 
 REGEX = re.compile(r'"(.*?)"')
 
@@ -59,29 +61,25 @@ async def on_message(message):
         u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
                            "]+", flags=re.UNICODE)
         no_emoji = (emoji_pattern.sub(r'', most_recent.content))
+        options = no_emoji.split('\n')
         # await message.channel.send("Most recent = " + most_recent.content)
-        reactions = most_recent.reactions
         max = most_recent.reactions[0].count
         for i in range(len(most_recent.reactions) - 1):
             if most_recent.reactions[i].count < most_recent.reactions[i+1].count:
                 max = most_recent.reactions[i+1].count
-
-            
     
-            
+    
+        winners = ""
         for i in range(len(most_recent.reactions)):
             if most_recent.reactions[i].count == max:
                 await message.channel.send("Most voted for: " + most_recent.reactions[i].emoji)
-                # winners = 
+                winners += options[i]
 
-            
-
-            
         await message.channel.send(most_recent.reactions[0].count)
-
+        await message.channel.send(winners)
         # await message.channel.send(reactions)
-    
         return
+
                 
 
     if message.content.startswith('!eat'):
