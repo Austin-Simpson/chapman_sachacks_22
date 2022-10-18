@@ -71,7 +71,7 @@ async def on_message(message):
 
 # fetch reactions and find most voted
     if message.content.startswith("!done"):
-
+        await message.delete()
         most_recent = None
         async for message in message.channel.history(limit=20):
             if message.author == client.user:
@@ -115,7 +115,7 @@ async def on_message(message):
             print(business["rating"])
             embed=discord.Embed(title=business["name"], url=business["url"], description="Address: " + ", ".join(business["location"]["display_address"]) + "\n" + business["price"], color=0xdc143c)
             embed.set_image(url=business["image_url"])
-            embed.set_footer(text="stars", icon_url="https://i.stack.imgur.com/Ke92A.png")
+            embed.set_footer(text=business["rating"], icon_url="https://logos-world.net/wp-content/uploads/2020/12/Yelp-Logo.png")
             embed.set_thumbnail(url="https://drjamestalkington.com/wp-content/uploads/2021/02/yelp-logo-png-round-8-copy.png")
             await message.channel.send(embed = embed)
         return
@@ -124,7 +124,7 @@ async def on_message(message):
 
         # fields = re.findall(r'"(.*?)"', message)
         # await message.channel.send(fields[0], fields[1:] if len(fields) > 0 else [])
-        # await message.delete()
+        await message.delete()
         args = message.content[5:].split(', ')
         # await message.channel.send(args)
         str = ''
